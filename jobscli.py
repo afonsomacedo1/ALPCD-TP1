@@ -9,7 +9,7 @@ from typing import Optional
 
 app = typer.Typer()
 
-API_KEY = os.environ.get("ITJOBS_API_KEY", "AQUI_A_TUA_API_KEY")
+API_KEY = "8fb88b4abede1240132fd7c0d6b700c0"
 
 BASE_URL = "https://api.itjobs.pt"
 
@@ -17,11 +17,24 @@ BASE_URL = "https://api.itjobs.pt"
 def api_get(path: str, params: dict | None = None):
     if params is None:
         params = {}
+
     if not API_KEY or API_KEY == "AQUI_A_TUA_API_KEY":
-        raise RuntimeError("API key não configurada. Define a variável de ambiente ITJOBS_API_KEY ou edita o ficheiro.")
+        raise RuntimeError("API_KEY não definida")
+
     params["api_key"] = API_KEY
     url = f"{BASE_URL}{path}"
-    resp = requests.get(url, params=params, timeout=10)
+
+    headers = {
+        # User-Agent real retirado de um exemplo funcional
+        "User-Agent": (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/50.0.2661.102 Safari/537.36"
+        ),
+        "Accept": "application/json",
+    }
+
+    resp = requests.get(url, params=params, headers=headers, timeout=10)
     resp.raise_for_status()
     return resp.json()
 
